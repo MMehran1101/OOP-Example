@@ -9,15 +9,23 @@ public class Controller : MonoBehaviour
 {
     public float speed;
     public Vector3 rot;
+    private Vector2 vectorMove;
+    private Rigidbody2D rPlayer;
     private bool IsGameOver;
     public GameObject gameoverText;
     
     private void Awake()
     {
-        rot.z = 3f;
-        speed = 5f;
+        rot.z = 1f;
+        speed = 0.1f;
     }
-    
+
+    private void Start()
+    {
+        rPlayer = GetComponent<Rigidbody2D>();
+        vectorMove = new Vector2(0, speed * Time.deltaTime);
+    }
+
     // Update is called once per frame
     void FixedUpdate()
     {
@@ -32,7 +40,7 @@ public class Controller : MonoBehaviour
     {
         if (Input.GetKey(KeyCode.Space))
         {
-            transform.Translate(0, speed * Time.deltaTime, 0);
+           rPlayer.AddRelativeForce(vectorMove,ForceMode2D.Force);
         }
     }
 
