@@ -1,54 +1,51 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEditor.UIElements;
+using UnityEditor;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class Controller : MonoBehaviour
 {
-    public float speed;
-    public Vector3 rot;
+    private float speed = 0.1f;
+    public Vector3 playerRotation;
     private Vector2 vectorMove;
-    private Rigidbody2D rPlayer;
-    private bool IsGameOver;
-    public GameObject gameoverText;
+    private Rigidbody2D rbPlayer;
     
-    private void Awake()
-    {
-        rot.z = 1f;
-        speed = 0.1f;
-    }
-
     private void Start()
     {
-        rPlayer = GetComponent<Rigidbody2D>();
+        playerRotation.z = 1f;
+        rbPlayer = GetComponent<Rigidbody2D>();
         vectorMove = new Vector2(0, speed * Time.deltaTime);
     }
 
     // Update is called once per frame
-    void FixedUpdate()
+    private void FixedUpdate()
     {
-        if (!IsGameOver)
-        {
-            Move();
-            transform.Rotate(rot);
-        }
+        Move();
     }
 
     private void Move()
     {
-        if (Input.GetKey(KeyCode.Space))
-        {
-           rPlayer.AddRelativeForce(vectorMove,ForceMode2D.Force);
-        }
+        transform.Rotate(playerRotation); // Rotate player
+        // Touch * * *
+        //if (Input.GetTouch(0).phase == TouchPhase.Stationary)
+          //  AddForce();
+        CheckTouchDown(KeyCode.Space);
     }
 
-
-    private void OnTriggerEnter2D(Collider2D col)
+    private void CheckTouchDown(KeyCode key)
     {
-        Debug.Log("Collided ...");
-        IsGameOver = true;
-        gameoverText.SetActive(true);
+        if (Input.GetKey(key))
+            KeyDownWork();
     }
+
+    private void KeyDownWork()
+    {
+        AddForce();
+    }
+
+    private void AddForce()
+    {
+        rbPlayer.AddRelativeForce(vectorMove, ForceMode2D.Force);
+    }
+
 }
