@@ -9,7 +9,9 @@ public class Controller : MonoBehaviour
     public Vector3 playerRotation;
     private Vector2 vectorMove;
     private Rigidbody2D rbPlayer;
-    
+
+    public ParticleSystem flameParticle;
+
     private void Start()
     {
         playerRotation.z = 1f;
@@ -23,24 +25,34 @@ public class Controller : MonoBehaviour
         Move();
     }
 
-    private void Move()
+    public void Move()
     {
         transform.Rotate(playerRotation); // Rotate player
-        // Touch * * *
-        //if (Input.GetTouch(0).phase == TouchPhase.Stationary)
-          //  AddForce();
-        CheckTouchDown(KeyCode.Space);
+     
+        if (Input.touchCount>0)
+        {
+            Touch touch = Input.GetTouch(0);
+            CheckTouchDown(touch);
+        }
     }
-
-    private void CheckTouchDown(KeyCode key)
+    
+    private void CheckTouchDown(Touch touch)
     {
-        if (Input.GetKey(key))
-            KeyDownWork();
+        switch (touch.phase)
+        {
+            case TouchPhase.Stationary:
+                TouchStationaryWork();
+                break;
+            case TouchPhase.Ended:
+                ActiveParticle(flameParticle,false);
+                break;
+        }
     }
 
-    private void KeyDownWork()
+    private void TouchStationaryWork()
     {
         AddForce();
+        ActiveParticle(flameParticle,true);
     }
 
     private void AddForce()
@@ -48,4 +60,9 @@ public class Controller : MonoBehaviour
         rbPlayer.AddRelativeForce(vectorMove, ForceMode2D.Force);
     }
 
+    private void ActiveParticle(ParticleSystem particle,bool isAcvtive)
+    {
+        if (isAcvtive) particle.Play();
+        else particle.Stop();
+    }
 }
