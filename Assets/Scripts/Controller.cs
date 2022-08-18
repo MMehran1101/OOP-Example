@@ -6,17 +6,17 @@ using UnityEngine;
 public class Controller : MonoBehaviour
 {
     private float speed = 0.1f;
-    public Vector3 playerRotation;
-    private Vector2 vectorMove;
+    public Vector3 rocketRotation;
+    private Vector2 rocketVectorMove;
     private Rigidbody2D rbPlayer;
 
     public ParticleSystem flameParticle;
 
     private void Start()
     {
-        playerRotation.z = 1f;
         rbPlayer = GetComponent<Rigidbody2D>();
-        vectorMove = new Vector2(0, speed * Time.deltaTime);
+        rocketVectorMove = new Vector2(0, speed * Time.deltaTime);
+        rocketRotation.z = 1f;
     }
 
     // Update is called once per frame
@@ -27,15 +27,19 @@ public class Controller : MonoBehaviour
 
     public void Move()
     {
-        transform.Rotate(playerRotation); // Rotate player
-     
-        if (Input.touchCount>0)
+        transform.Rotate(rocketRotation);
+        CheckTouchDown(TouchCount());
+    }
+
+    private Touch TouchCount()
+    {
+        if (Input.touchCount > 0)
         {
             Touch touch = Input.GetTouch(0);
-            CheckTouchDown(touch);
+            return touch;
         }
+        return new Touch();
     }
-    
     private void CheckTouchDown(Touch touch)
     {
         switch (touch.phase)
@@ -44,23 +48,29 @@ public class Controller : MonoBehaviour
                 TouchStationaryWork();
                 break;
             case TouchPhase.Ended:
-                ActiveParticle(flameParticle,false);
+                TouchEndedWork();
                 break;
         }
     }
 
+    
     private void TouchStationaryWork()
     {
         AddForce();
-        ActiveParticle(flameParticle,true);
+        ActiveParticle(flameParticle, true);
     }
+    private void TouchEndedWork()
+    {
+        ActiveParticle(flameParticle, false);
+    }
+
 
     private void AddForce()
     {
-        rbPlayer.AddRelativeForce(vectorMove, ForceMode2D.Force);
+        rbPlayer.AddRelativeForce(rocketVectorMove, ForceMode2D.Force);
     }
 
-    private void ActiveParticle(ParticleSystem particle,bool isAcvtive)
+    private void ActiveParticle(ParticleSystem particle, bool isAcvtive)
     {
         if (isAcvtive) particle.Play();
         else particle.Stop();
