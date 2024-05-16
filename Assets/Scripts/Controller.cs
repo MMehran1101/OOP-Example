@@ -12,38 +12,30 @@ public class Controller : MonoBehaviour
 
     public ParticleSystem flameParticle;
 
-    private void Start()
-    {
+    private void Start() {
         rbPlayer = GetComponent<Rigidbody2D>();
         rocketVectorMove = new Vector2(0, speed * Time.deltaTime);
         rocketRotation.z = 1f;
     }
 
-    // Update is called once per frame
-    private void FixedUpdate()
-    {
+    private void FixedUpdate() {
         Move();
     }
 
-    public void Move()
-    {
+    public void Move() {
         transform.Rotate(rocketRotation);
         CheckTouchDown(TouchCount());
     }
 
-    private Touch TouchCount()
-    {
-        if (Input.touchCount > 0)
-        {
+    private Touch TouchCount() {
+        if (Input.touchCount > 0) {
             Touch touch = Input.GetTouch(0);
             return touch;
         }
         return new Touch();
     }
-    private void CheckTouchDown(Touch touch)
-    {
-        switch (touch.phase)
-        {
+    public void CheckTouchDown(Touch touch) {
+        switch(touch.phase) {
             case TouchPhase.Stationary:
                 TouchStationaryWork();
                 break;
@@ -54,24 +46,20 @@ public class Controller : MonoBehaviour
     }
 
     
-    private void TouchStationaryWork()
-    {
+    private void TouchStationaryWork() {
         AddForce();
         ActiveParticle(flameParticle, true);
     }
-    private void TouchEndedWork()
-    {
+    private void TouchEndedWork() {
         ActiveParticle(flameParticle, false);
     }
 
 
-    private void AddForce()
-    {
+    private void AddForce() {
         rbPlayer.AddRelativeForce(rocketVectorMove, ForceMode2D.Force);
     }
 
-    private void ActiveParticle(ParticleSystem particle, bool isAcvtive)
-    {
+    private void ActiveParticle(ParticleSystem particle, bool isAcvtive) {
         if (isAcvtive) particle.Play();
         else particle.Stop();
     }
